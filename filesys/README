@@ -1,0 +1,2 @@
+项目启动
+nohup java -jar /opt/soft/myFileSystem/filesys.jar > /opt/soft/myFileSystem/filesys.log 2>&1 &

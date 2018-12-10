@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <!--thymeleaf引入css及js不必加/static-->
+    <script th:src="@{/jQuery/jquery-3.2.1.min.js}" src="../../static/jQuery/jquery-3.2.1.min.js"></script>
+    <script th:src="@{/layui/layui.all.js}" src="../../static/layui/layui.all.js"></script>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../../static/layui/css/layui.css">
+    <title>Title</title>
+</head>
+<body>
+
+
+<table class="layui-hide" id="test" lay-filter="test1"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+            elem: '#test'
+            ,page:true
+            ,url: '/manage/listFile'
+            //,where: {token: 'zzw1',userId: 'test0001'} //如果无需传递额外参数，可不加该参数
+            ,method: 'get' //如果无需自定义HTTP类型，可不加该参数
+            ,request: {
+                pageName: 'pageIndex' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            } //如果无需自定义请求参数，可不加该参数
+            ,response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                ,statusCode: 1 //规定成功的状态码，默认：0
+                ,msgName: 'msg' //规定状态信息的字段名称，默认：msg
+                ,countName: 'count' //规定数据总数的字段名称，默认：count
+                ,dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+            ,parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            }
+            ,cols: [
+                [
+                     {field:'uploaderId', width:100, title: '上传者', sort: true}
+                    ,{field:'fileId', width:100, title: '文件ID',hide:true}
+                    ,{field:'fileName', width:250, title: '文件名'}
+                    ,{field:'fileUrl', width:200, title: '下载',hide:true}
+                    ,{field:'fileFormats',width: 100, title: '格式'}
+                    ,{field:'fileSort', width:100, title: '分类',hide:true}
+                    ,{field:'fileSize', width:100, title: '大小', sort: true}
+                    ,{field:'uploadTime', width:200, title: '上传时间'}
+                    ,{field:'downloadTimes', width:120, title: '下载次数', sort: true}
+                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:200}
+                ]
+            ]
+
+        });
+
+        //监听行工具事件
+        table.on('tool(test1)', function(obj){
+            var data = obj.data;
+            console.log(data);
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                layer.prompt({
+                    formType: 2
+                    ,value: data.fileName
+                }, function(value, index){
+                    obj.update({
+                        fileName: value
+                    });
+                    layer.close(index);
+                });
+            } else if(obj.event === 'detail'){
+                var src = "/download/getFile?fileUrl="+data.fileUrl;
+                if(data.fileSort == "1") {
+                    layer.open({
+                        type: 3
+                        , title: false //不显示标题栏
+                        , offset: 'auto'
+                        , area: ['800px', '520px']
+                        , shade: 0.5
+                        , closeBtn: false
+                        , btn: ['Ok']
+                        , id: 'imageShow' //设定一个id，防止重复弹出
+                        , btnAlign: 'c'
+                        , moveType: 0 //拖拽模式，0或者1
+                        , content: '<img style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
+                        , yes: function () {
+                            layer.closeAll();
+                        }
+                    });
+                }else if(data.fileSort == "2"){
+                    layer.open({
+                        type: 3
+                        , title: false //不显示标题栏
+                        , offset: 'auto'
+                        , area: ['800px', '520px']
+                        , shade: 0.5
+                        , closeBtn: false
+                        , btn: ['Ok']
+                        , id: 'imageShow' //设定一个id，防止重复弹出
+                        , btnAlign: 'c'
+                        , moveType: 0 //拖拽模式，0或者1
+                        , content: '<video style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
+                        , yes: function () {
+                            layer.closeAll();
+                        }
+                    });
+                }
+
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

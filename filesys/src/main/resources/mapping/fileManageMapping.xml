@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lhs.filesys.mapper.FileManageMapper">
+    <insert id="saveMyFile" parameterType="cn.lhs.filesys.entity.MyFile">
+        INSERT INTO myfile (uploaderId,fileId,fileName,fileUrl,fileFormats,fileSort,fileSize,uploadTime,downloadTimes)
+        VALUES (#{uploaderId},#{fileId},#{fileName},#{fileUrl},#{fileFormats},#{fileSort},#{fileSize},#{uploadTime},#{downloadTimes});
+    </insert>
+    <select id="getListMyFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
+        SELECT * FROM myfile ORDER BY uploadTime ASC limit #{offset},#{rows};
+    </select>
+    <select id="getFileNum" resultType="java.lang.Integer">
+        SELECT count(fileId) FROM myfile;
+    </select>
+    <update id="addDownloadTimes" parameterType="java.util.Map">
+        UPDATE myfile set downloadTimes = downloadTimes + 1
+        WHERE uploaderId=#{uploaderId} AND fileId=#{fileId};
+    </update>
+</mapper>
