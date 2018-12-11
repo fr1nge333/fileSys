@@ -1,6 +1,9 @@
 package cn.lhs.filesys.config.intercepors;
 
+import cn.lhs.filesys.controller.FileUploadController;
 import cn.lhs.filesys.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -12,6 +15,8 @@ import javax.servlet.http.HttpSession;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
     //这个方法是在访问接口之前执行的，我们只需要在这里写验证登陆状态的业务逻辑，就可以在用户调用指定接口之前验证登陆状态了
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -25,7 +30,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (user == null){
             //这个方法返回false表示忽略当前请求，如果一个用户调用了需要登陆才能使用的接口，如果他没有登陆这里会直接忽略掉
             //当然你可以利用response给用户返回一些提示信息，告诉他没登陆
-            System.out.println ("no session");
+            logger.info("no session"+",请求路径："+request.getRequestURI());
             return false;
         } else {
             System.out.println ("session exist");

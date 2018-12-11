@@ -1,31 +1,37 @@
 package cn.lhs.filesys.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class PageController {
-    @RequestMapping("/login")
+    @GetMapping("/login")
     public String login(){
         return "login";
     }
 
-    @RequestMapping("/uploadImage")
+    @GetMapping("/register")
+    public String register(){
+        return "reg";
+    }
+
+    @GetMapping("/uploadImage")
     public String uploadImage(){
         return "uploadImage";
     }
 
-    @RequestMapping("/uploadVideo")
+    @GetMapping("/uploadVideo")
     public String uploadVideo(){
         return "uploadVideo";
     }
 
-    @RequestMapping("/download")
+    @GetMapping("/download")
     public String download(){
         return "showAndDownload";
     }
 
-    @RequestMapping("/test")
+    @GetMapping("/test")
     public String test(){
         return "test2";
     }
