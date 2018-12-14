@@ -26,6 +26,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         //这里的User是登陆时放入session的
         User user = (User) session.getAttribute("user");
 
+        logger.info("请求路径："+request.getRequestURI());
+
         //如果session中没有user，表示没登陆
         if (user == null){
             //这个方法返回false表示忽略当前请求，如果一个用户调用了需要登陆才能使用的接口，如果他没有登陆这里会直接忽略掉
@@ -33,7 +35,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             logger.info("no session"+",请求路径："+request.getRequestURI());
             return false;
         } else {
-            System.out.println ("session exist");
+            logger.info("has session"+",请求路径："+request.getRequestURI());
             System.out.println (session.toString ());
             return true;    //如果session里有user，表示该用户已经登陆，放行，用户即可继续调用自己需要的接口
         }

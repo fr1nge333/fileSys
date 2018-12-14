@@ -4,23 +4,21 @@ import cn.lhs.filesys.entity.User;
 import cn.lhs.filesys.service.UserService;
 import cn.lhs.filesys.util.GetMD5;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Date;
 
-@RestController
-@RequestMapping("/user")
+@Controller
 public class UserController {
     @Autowired
     public UserService userService;
 
-    @RequestMapping("/register")
+    @RequestMapping(value = "/userRegister",method = RequestMethod.POST)
     public String createUser(@RequestParam(required = true,value = "userId")String userId,
                              @RequestParam(required = true,value = "userName")String userName,
                              @RequestParam(required = true,value = "password")String password){
@@ -30,28 +28,31 @@ public class UserController {
         user.setPassword ( GetMD5.encryptString ( password ) );
         user.setCreateTime ( new Date () );
         user.setAuthority ("1");
-        userService.createUser ( user );
-        return "succeed";
+        System.out.println (user);
+        //userService.createUser ( user );
+        return "regSucceed";
     }
 
-    @RequestMapping("/login")
+    @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
     public String checkUser(HttpServletRequest request,HttpServletResponse response,
                              @RequestParam(required = true,value = "userId")String userId,
                              @RequestParam(required = true,value = "password")String password){
-        User user = userService.checkUser ( userId,GetMD5.encryptString ( password ) );
+        //User user = userService.checkUser ( userId,GetMD5.encryptString ( password ) );
+        User user = new User ();
+        user.setUserId ( userId );
+        user.setPassword ( password );
         System.out.println (user);
         HttpSession session = request.getSession ();
         session.setAttribute ( "user",user );
-        return "login";
+        return "uploadImage";
     }
 
-    @RequestMapping("/test")
-    public User test(HttpServletRequest request,
+    @RequestMapping("/userTest")
+    public void test(HttpServletResponse response,
                             @RequestParam(required = true,value = "userId")String userId,
+                            @RequestParam(required = true,value = "userName")String userName,
                             @RequestParam(required = true,value = "password")String password){
-        User user = userService.checkUser ( userId,GetMD5.encryptString ( password ) );
-        System.out.println (user);
-        return user;
+        System.out.println (userId+","+userName+","+password);
     }
 
 }

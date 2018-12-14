@@ -2,7 +2,6 @@ package cn.lhs.filesys.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class PageController {
@@ -14,6 +13,11 @@ public class PageController {
     @GetMapping("/register")
     public String register(){
         return "reg";
+    }
+
+    @GetMapping("/error")
+    public String test(){
+        return "error";
     }
 
     @GetMapping("/uploadImage")
@@ -29,11 +33,6 @@ public class PageController {
     @GetMapping("/download")
     public String download(){
         return "showAndDownload";
-    }
-
-    @GetMapping("/test")
-    public String test(){
-        return "test2";
     }
 
 }
