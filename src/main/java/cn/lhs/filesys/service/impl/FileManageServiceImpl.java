@@ -23,13 +23,20 @@ public class FileManageServiceImpl implements FileManageService {
     }
 
     @Override
-    public int delMyFile(String fileId) {
-        return 0;
+    public int delMyFile(String uploaderId, String fileUrl) {
+        Map<String,String> map = new HashMap<>();
+        map.put("uploaderId",uploaderId);
+        map.put("fileUrl",fileUrl);
+        return fileManageMapper.delMyFile(map);
     }
 
     @Override
-    public int modifyMyFile(String fileId) {
-        return 0;
+    public int modifyMyFile(String uploaderId, String fileUrl, String fileName) {
+        Map<String,String> map = new HashMap<>();
+        map.put("uploaderId",uploaderId);
+        map.put("fileUrl",fileUrl);
+        map.put("fileName",fileName);
+        return fileManageMapper.modifyMyFile(map);
     }
 
     @Override
@@ -41,8 +48,22 @@ public class FileManageServiceImpl implements FileManageService {
     }
 
     @Override
+    public List<MyFile> getListMyFileByUserId(String uploaderId, int pageIndex, int pageSize) {
+        Map<String,Object> map = new HashMap<>(  );
+        map.put ( "offset",(pageIndex-1)*pageSize );
+        map.put ( "rows",pageSize );
+        map.put("uploaderId",uploaderId);
+        return fileManageMapper.getListMyFileByUserId(map);
+    }
+
+    @Override
     public int getFileNum() {
         return fileManageMapper.getFileNum();
+    }
+
+    @Override
+    public int getFileNumByUserId(String uploaderId) {
+        return fileManageMapper.getFileNumByUserId(uploaderId);
     }
 
     @Override

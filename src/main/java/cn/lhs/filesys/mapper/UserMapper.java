@@ -6,7 +6,9 @@ import java.util.Map;
 
 public interface UserMapper {
     int createUser(User user);//注册新用户
+    int isUserExist(String userId);
     User checkUser(Map<String, String> map);//用户登录
     int modifyUserName(Map<String, String> map);
     int modifyPassword(Map<String, String> map);
+
 }

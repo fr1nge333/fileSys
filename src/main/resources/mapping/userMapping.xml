@@ -9,6 +9,10 @@
         SELECT * FROM user WHERE userId=#{userId} AND password=#{password};
     </select>
 
+    <select id="isUserExist" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(userId) FROM user WHERE userId=#{userId};
+    </select>
+
     <update id="modifyUserName" parameterType="java.util.Map" >
         UPDATE user SET userName=#{userName} WHERE userId=#{userId};
     </update>

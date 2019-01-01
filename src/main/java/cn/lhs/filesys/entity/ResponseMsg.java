@@ -3,7 +3,7 @@ package cn.lhs.filesys.entity;
 import java.util.List;
 
 public class ResponseMsg {
-    private int code;
+    private int code;//0-失败；1-成功
     private String msg;
     private int count;
     private List<FileMsg> data;

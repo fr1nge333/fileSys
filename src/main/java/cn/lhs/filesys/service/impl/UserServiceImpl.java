@@ -20,6 +20,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int isUserExist(String userId) {
+        return userMapper.isUserExist(userId);
+    }
+
+    @Override
     public User checkUser(String userId, String password) {
         Map<String,String> map = new HashMap<> ();
         map.put ( "userId",userId );

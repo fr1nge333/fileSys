@@ -5,20 +5,65 @@
     <!--thymeleaf引入css及js不必加/static-->
     <script th:src="@{/jQuery/jquery-3.2.1.min.js}" src="../static/jQuery/jquery-3.2.1.min.js"></script>
     <script th:src="@{/layui/layui.all.js}" src="../static/layui/layui.all.js"></script>
+    <script th:src="@{/layui/layui.js}" src="../static/layui/layui.js"></script>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css">
-    <title>显示文件</title>
+    <link rel="stylesheet" th:href="@{/css/global.css}" href="../static/css/global.css">
+    <title>下载文件</title>
 </head>
 <body>
+    <div class="fly-header layui-bg-black">
+        <div class="layui-container">
+            <a class="fly-logo" href="javascript:void(0)">
+                <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
+            </a>
+            <ul class="layui-nav fly-nav layui-hide-xs">
+                <li class="layui-nav-item layui-this">
+                    <a href="/index"><i class="layui-icon layui-icon-file"></i>我的文件</a>
+                </li>
+                <li class="layui-nav-item layui-this">
+                    <a href="/uploadVideo"><i class="layui-icon layui-icon-upload-drag"></i>上传视频</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/uploadImage"><i class="layui-icon layui-icon-upload"></i>上传图片</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="/download"><i class="layui-icon layui-icon-download-circle"></i>下载</a>
+                </li>
+            </ul>
 
+            <ul class="layui-nav fly-nav-user">
+                <!-- 登入后的状态 -->
+                <li class="layui-nav-item">
+                    <a class="fly-nav-avatar" href="javascript:;">
+                        <cite class="layui-hide-xs" th:text="${session.user.userName}"></cite>
+                        <i class="layui-icon layui-icon-username" type="color:#1E9FFF">个人中心</i>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+                        <dd><a href="" style="text-align: center;">退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="fly-home fly-panel">
+        <table class="layui-hide" id="test" lay-filter="test1"></table>
+    </div>
 
-<table class="layui-hide" id="test" lay-filter="test1"></table>
+    <!--存储session-->
+    <input type="hidden" name="user" id="user" th:value="${session.user}"/>
+    <input type="hidden" name="user" id="userId" th:value="${session.user.userId}"/>
 
+</body>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
     <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
 </script>
 
 <script>
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+    });
     layui.use('table', function(){
         var table = layui.table;
         table.render({
@@ -46,18 +91,22 @@
                     "data": res.data //解析数据列表
                 };
             }
+            ,text: {
+                none: '暂无任何文件！' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+            }
+            ,cellMinWidth: 100
             ,cols: [
                 [
-                    {field:'uploaderId', width:100, title: '上传者', sort: true}
-                    ,{field:'fileId', width:100, title: '文件ID',hide:true}
-                    ,{field:'fileName', width:400, title: '文件名'}
-                    ,{field:'fileUrl', width:200, title: '下载',hide:true}
-                    ,{field:'fileFormats',width: 100, title: '格式'}
-                    ,{field:'fileSort', width:100, title: '分类',hide:true}
-                    ,{field:'fileSize', width:100, title: '大小',sort: true}
-                    ,{field:'uploadTime', width:200, title: '上传时间',sort: true}
-                    ,{field:'downloadTimes', width:120, title: '下载次数',sort: true}
-                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:200}
+                    {field:'uploaderId',    title: '上传者',  align: 'center',hide:true}
+                    ,{field:'fileId',       title: '文件ID',  align: 'center',hide:true}
+                    ,{field:'fileName',     title: '文件名',  align: 'center',sort:true}
+                    ,{field:'fileUrl',      title: '文件路径',align: 'center',hide:true}
+                    ,{field:'fileFormats',  title: '格式',    align: 'center'}
+                    ,{field:'fileSort',     title: '分类',    align: 'center',hide:true}
+                    ,{field:'fileSize',     title: '大小(B)', align: 'center',sort:true}
+                    ,{field:'uploadTime',   title: '上传时间',align: 'center',sort:true}
+                    ,{field:'downloadTimes',title: '下载次数',align: 'center',sort:true}
+                    ,{fixed: 'right',       title:'操作',     align: 'center', toolbar: '#barDemo'}
                 ]
             ]
 
@@ -119,5 +168,5 @@
 
     });
 </script>
-</body>
+
 </html>

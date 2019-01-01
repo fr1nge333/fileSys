@@ -18,8 +18,8 @@ public class FilesysApplication {
 
 	@Bean
 	MultipartConfigElement multipartConfigElement() {
-		String url = "/opt/soft/myFileSystem/temp/";
-		//String url = "F:/test/temp/";
+		//String url = "/opt/soft/myFileSystem/temp/";
+		String url = "F:/test/temp/";
 		MultipartConfigFactory factory = new MultipartConfigFactory();
 		factory.setLocation(url);
 		return factory.createMultipartConfig();

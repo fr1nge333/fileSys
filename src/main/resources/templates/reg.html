@@ -15,7 +15,7 @@
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img th:src="@{/images/logo.png}" src="../static/images/logo.png" alt="layui">
+      <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
     </a>
   </div>
 </div>
@@ -34,27 +34,27 @@
               <div class="layui-form-item">
                 <label for="userId" class="layui-form-label">邮箱</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="userId" name="userId" required lay-verify="email" onblur="checkUser()" autocomplete="off" class="layui-input">
+                  <input type="text" id="userId" name="userId" required lay-verify="email|userId" onblur="checkUser()" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
               </div>
               <div class="layui-form-item">
                 <label for="userName" class="layui-form-label">昵称</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="userName" name="userName" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="text" id="userName" name="userName" required lay-verify="userName" autocomplete="off" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
                 <label for="password" class="layui-form-label">密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="password" name="password" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="password" name="password" required lay-verify="passwordForm" maxlength="16" minlength="6" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid layui-word-aux">6到16个字符</div>
               </div>
               <div class="layui-form-item">
                 <label for="repass" class="layui-form-label">确认密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="repass" name="repass" required lay-verify="passwordForm|checkPassword" maxlength="16" minlength="6" autocomplete="off" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
@@ -70,39 +70,44 @@
 <iframe name="showResult" style="display: none"></iframe>
 </body>
 <script>
+    var count = 0;
     function checkUser() {
-        console.log("Hello World");
+        $.ajax({
+            type:"GET",
+            url:"/userTest",
+            data:{userId:$('#userId').val()},
+            dataType:"json",
+            success:function(data){
+                console.log(data);
+                count = data.code;
+            }
+        });
     }
 
     layui.use('form', function(){
         var form = layui.form;
 
-        // form.verify({
-        //     repass: function(value, item){ //value：表单的值、item：表单的DOM对象
-        //
-        //     }
-        //
-        //     //我们既支持上述函数式的方式，也支持下述数组的形式
-        //     //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
-        //     ,pass: [
-        //         /^[\S]{6,16}$/
-        //         ,'密码必须6到12位，且不能出现空格'
-        //     ]
-        // });
-
-
-        form.on('submit(*)', function(data){
-            console.log(data.elem); //被执行事件的元素DOM对象，一般为button对象
-            console.log(data.form); //被执行提交的form对象，一般在存在form标签时才会返回
-            console.log(data.field); //当前容器的全部表单字段，名值对形式：{name: value}
-
-            console.log(data.field.password);
-            console.log(data.field.repass);
-
-            if(!($('#password').val() == $('#repass').val())) {
-                alert("两次输入的密码不同！");
-                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        form.verify({
+            userId:function () {
+               if(count){
+                   return "该邮箱已被注册！";
+               }
             }
+            ,userName:function (value) {
+                if(value.length>10){
+                    return "用户名长度不能超过10";
+                }
+            }
+            ,passwordForm: [
+                /^[\S]{6,16}$/
+                ,'密码必须6到16位，且不能出现空格'
+            ]
+            ,checkPassword: function(){ //value：表单的值、item：表单的DOM对象
+                if(!($('#password').val() === $('#repass')).val()){
+                    return "两次输入的密码不同！";
+                }
+            }
+
         });
     });
 

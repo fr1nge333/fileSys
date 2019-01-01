@@ -5,12 +5,31 @@
         INSERT INTO myfile (uploaderId,fileId,fileName,fileUrl,fileFormats,fileSort,fileSize,uploadTime,downloadTimes)
         VALUES (#{uploaderId},#{fileId},#{fileName},#{fileUrl},#{fileFormats},#{fileSort},#{fileSize},#{uploadTime},#{downloadTimes});
     </insert>
+
+    <delete id="delMyFile" parameterType="java.util.Map" >
+        DELETE FROM myfile WHERE uploaderId=#{uploaderId} AND fileUrl=#{fileUrl};
+    </delete>
+
+    <update id="modifyMyFile" parameterType="java.util.Map">
+        UPDATE myfile SET fileName=#{fileName} WHERE uploaderId=#{uploaderId} AND fileUrl=#{fileUrl};
+    </update>
+
     <select id="getListMyFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
         SELECT * FROM myfile ORDER BY uploadTime ASC limit #{offset},#{rows};
     </select>
+
+    <select id="getListMyFileByUserId" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
+        SELECT * FROM myfile WHERE uploaderId=#{uploaderId} ORDER BY uploadTime ASC limit #{offset},#{rows};
+    </select>
+
     <select id="getFileNum" resultType="java.lang.Integer">
         SELECT count(fileId) FROM myfile;
     </select>
+
+    <select id="getFileNumByUserId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(fileId) FROM myfile WHERE uploaderId=#{uploaderId};
+    </select>
+
     <update id="addDownloadTimes" parameterType="java.util.Map">
         UPDATE myfile set downloadTimes = downloadTimes + 1
         WHERE uploaderId=#{uploaderId} AND fileId=#{fileId};

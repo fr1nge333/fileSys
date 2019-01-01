@@ -16,8 +16,13 @@ public class PageController {
     }
 
     @GetMapping("/error")
-    public String test(){
+    public String error(){
         return "error";
+    }
+
+    @GetMapping("/index")
+    public String index(){
+        return "index";
     }
 
     @GetMapping("/uploadImage")
