@@ -8,4 +8,8 @@ public interface UserService {
     User checkUser(String userId, String password);
     int modifyUserName(String userId, String userName);
     int modifyPassword(String userId, String password);
+
+    int getUserPoint(String userId);
+    int modifyUserPoint(String userId,int point);
+    int pointPlusAndMinus(String userId,int point);
 }

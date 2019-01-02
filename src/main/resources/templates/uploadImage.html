@@ -117,7 +117,11 @@
                     demoListView.append(tr);
                 });
             }
+            ,before: function(obj){
+                layer.load(); //上传loading
+            }
             ,done: function(res, index, upload){
+                layer.closeAll('loading'); //关闭loading
                 console.log("code="+res.code);
                 if(res.code == 1){ //上传成功
                     var tr = demoListView.find('tr#upload-'+ index)
@@ -130,6 +134,7 @@
                 }
             }
             ,error: function(index, upload){
+                layer.closeAll('loading'); //关闭loading
                 var tr = demoListView.find('tr#upload-'+ index)
                     ,tds = tr.children();
                 tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');

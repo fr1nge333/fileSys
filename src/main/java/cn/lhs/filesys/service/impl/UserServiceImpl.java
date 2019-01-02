@@ -48,4 +48,25 @@ public class UserServiceImpl implements UserService {
         return userMapper.modifyPassword ( map );
     }
 
+    @Override
+    public int getUserPoint(String userId) {
+        return userMapper.getUserPoint(userId);
+    }
+
+    @Override
+    public int modifyUserPoint(String userId, int point) {
+        Map<String,Object> map = new HashMap<> ();
+        map.put ( "userId",userId );
+        map.put ( "point",point );
+        return userMapper.modifyUserPoint(map);
+    }
+
+    @Override
+    public int pointPlusAndMinus(String userId, int points) {
+        Map<String,Object> map = new HashMap<> ();
+        map.put ( "userId",userId );
+        map.put ( "points",points );
+        return userMapper.pointPlusAndMinus(map);
+    }
+
 }

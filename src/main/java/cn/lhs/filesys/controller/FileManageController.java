@@ -4,6 +4,7 @@ import cn.lhs.filesys.entity.FileMsg;
 import cn.lhs.filesys.entity.MyFile;
 import cn.lhs.filesys.entity.ResponseMsg;
 import cn.lhs.filesys.service.FileManageService;
+import cn.lhs.filesys.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class FileManageController {
 
     @Autowired
     FileManageService fileManageService;
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("/listFile")
     public ResponseMsg listFiles(@RequestParam(required = true,value = "pageIndex")int pageIndex,
@@ -84,7 +88,7 @@ public class FileManageController {
 
     @GetMapping("/delFile")
     public ResponseMsg delFile(@RequestParam(required = true,value = "uploaderId")String uploaderId,
-                      @RequestParam(required = true,value = "fileUrl")String fileUrl){
+                               @RequestParam(required = true,value = "fileUrl")String fileUrl){
         logger.info("uploaderId="+uploaderId+",fileUrl="+fileUrl);
         int code = fileManageService.delMyFile(uploaderId, fileUrl);
         boolean flag;
@@ -104,13 +108,33 @@ public class FileManageController {
     }
 
     @GetMapping("/addDownloadTimes")
-    public void addDownloadTimes(@RequestParam(required = true,value = "uploaderId")String uploaderId,
-                                 @RequestParam(required = true,value = "fileId")String fileId){
+    public ResponseMsg addDownloadTimes(@RequestParam(value = "uploaderId")String uploaderId,
+                                        @RequestParam(value = "fileId")String fileId){
         logger.info("uploaderId="+uploaderId+",fileId="+fileId);
-        fileManageService.addDownloadTimes(uploaderId,fileId);
+        int code = fileManageService.addDownloadTimes(uploaderId,fileId);
+        String msg;
+        if (code == 0){
+            msg = "修改失败";
+        }else {
+            msg = "修改成功";
+        }
+        return new ResponseMsg(code,msg);
     }
 
 
-
+    @GetMapping("/shareFile")
+    public ResponseMsg shareFile(@RequestParam(required = true,value = "uploaderId")String uploaderId,
+                                 @RequestParam(required = true,value = "fileUrl")String fileUrl,
+                                 @RequestParam(required = true,value = "isShared")String isShared){
+        logger.info("uploaderId="+uploaderId+",fileUrl="+fileUrl+",isShared="+isShared);
+        int code = fileManageService.shareFile(uploaderId, fileUrl, isShared);
+        String msg;
+        if(code == 0){
+            msg = "修改失败";
+        }else {
+            msg = "修改成功";
+        }
+        return new ResponseMsg(code,msg);
+    }
 
 }

@@ -57,6 +57,7 @@ public class FileUploadController {
                 myFile.setFileSort(fileSort);
                 myFile.setUploadTime(new Date());
                 myFile.setDownloadTimes(0);
+                myFile.setIsShared("0");//默认不分享
                 logger.info(myFile.toString());
                 try {
                     picFiles.get(i).transferTo(new File(myFile.getFileUrl()));
@@ -91,6 +92,7 @@ public class FileUploadController {
         myFile.setFileSort ( fileSort );
         myFile.setUploadTime ( new Date () );
         myFile.setDownloadTimes ( 0 );
+        myFile.setIsShared("0");//默认不分享
         logger.info ( myFile.toString () );
 
         try {

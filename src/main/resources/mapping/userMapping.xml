@@ -20,4 +20,16 @@
     <update id="modifyPassword" parameterType="java.util.Map">
         UPDATE user SET password={password} WHERE userId=#{userId};
     </update>
+
+    <select id="getUserPoint" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT point FROM user WHERE userId=#{userId};
+    </select>
+
+    <update id="modifyUserPoint" parameterType="java.util.Map">
+        UPDATE user SET point=#{point} WHERE userId=#{userId};
+    </update>
+
+    <update id="pointPlusAndMinus" parameterType="java.util.Map">
+        UPDATE user SET point=point + #{points} WHERE userId=#{userId};
+    </update>
 </mapper>

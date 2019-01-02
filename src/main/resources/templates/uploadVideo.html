@@ -78,7 +78,11 @@
             ,multiple: true
             ,auto: false
             ,bindAction: '#testListAction'
+            ,before: function(obj){
+                layer.load(); //上传loading
+            }
             ,done: function(res){
+                layer.closeAll('loading'); //关闭loading
                 console.log("code="+res.code);
                 //上传成功
                 if(res.code == 1){
@@ -90,6 +94,7 @@
                 }
             }
             ,error: function(){
+                layer.closeAll('loading'); //关闭loading
                 //演示失败状态，并实现重传
                 var demoText = $('#demoText');
                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');

@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.lhs.filesys.mapper.FileManageMapper">
     <insert id="saveMyFile" parameterType="cn.lhs.filesys.entity.MyFile">
-        INSERT INTO myfile (uploaderId,fileId,fileName,fileUrl,fileFormats,fileSort,fileSize,uploadTime,downloadTimes)
-        VALUES (#{uploaderId},#{fileId},#{fileName},#{fileUrl},#{fileFormats},#{fileSort},#{fileSize},#{uploadTime},#{downloadTimes});
+        INSERT INTO myfile (uploaderId,fileId,fileName,fileUrl,fileFormats,fileSort,fileSize,uploadTime,downloadTimes,isShared)
+        VALUES (#{uploaderId},#{fileId},#{fileName},#{fileUrl},#{fileFormats},#{fileSort},#{fileSize},#{uploadTime},#{downloadTimes},#{isShared});
     </insert>
 
     <delete id="delMyFile" parameterType="java.util.Map" >
@@ -15,7 +15,7 @@
     </update>
 
     <select id="getListMyFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
-        SELECT * FROM myfile ORDER BY uploadTime ASC limit #{offset},#{rows};
+        SELECT * FROM myfile WHERE isShared='1' ORDER BY uploadTime ASC limit #{offset},#{rows};
     </select>
 
     <select id="getListMyFileByUserId" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
@@ -23,7 +23,7 @@
     </select>
 
     <select id="getFileNum" resultType="java.lang.Integer">
-        SELECT count(fileId) FROM myfile;
+        SELECT count(fileId) FROM myfile WHERE isShared='1';
     </select>
 
     <select id="getFileNumByUserId" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -33,5 +33,9 @@
     <update id="addDownloadTimes" parameterType="java.util.Map">
         UPDATE myfile set downloadTimes = downloadTimes + 1
         WHERE uploaderId=#{uploaderId} AND fileId=#{fileId};
+    </update>
+
+    <update id="shareFile" parameterType="java.util.Map">
+        UPDATE myfile SET isShared=#{isShared} WHERE uploaderId=#{uploaderId} AND fileUrl=#{fileUrl};
     </update>
 </mapper>

@@ -116,16 +116,51 @@
         table.on('tool(test1)', function(obj){
             var data = obj.data;
             console.log(data);
-            if(obj.event === 'download'){
+            if(obj.event === 'download'){//如果是下载点击事件
                 var src = "/download/getFile?fileUrl=" + data.fileUrl;
-                $.ajax({
-                    url:"/manage/addDownloadTimes",
-                    type: "GET",
-                    data: {uploaderId:data.uploaderId, fileId:data.fileId},
-                    dataType: "json"
-                });
-                window.open(src);
-            } else if(obj.event === 'detail'){
+                if(data.uploaderId === $('#userId').val()){//下载自己分享的文件
+                    window.open(src);
+                }else {//下载别人分享的文件
+                    var flag = false;
+                    var ajax = $.ajax({
+                        url: "/checkPoint",
+                        type: "GET",
+                        data: {uploaderId: data.uploaderId, userId: $('#userId').val(), fileSort: data.fileSort},
+                        dataType: "json",
+                        success:function (data) {
+                            if(data.code === 0){//无法下载，可能是积分不够或者其他原因，给出提示信息
+                                layer.msg(data.msg);
+                            }else {
+                                //开始下载
+                                window.open(src);
+                                flag = true;
+                            }
+                        }
+                    });
+
+                    $.when(ajax).done(function () {
+                        console.log('flag='+flag);
+                        if(flag) {
+                            //增加下载次数
+                            $.ajax({
+                                url: "/manage/addDownloadTimes",
+                                type: "GET",
+                                data: {uploaderId: data.uploaderId, fileId: data.fileId},
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.code === 0) {
+                                        layer.msg(data.msg);
+                                    } else {
+                                        //刷新表
+                                        table.reload('test', {});
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                }
+            } else if(obj.event === 'detail'){//如果是查看点击事件
                 var src = "/download/getFile?fileUrl="+data.fileUrl;
                 if(data.fileSort == "1") {
                     layer.open({

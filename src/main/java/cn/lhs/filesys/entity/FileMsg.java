@@ -10,6 +10,7 @@ public class FileMsg {
     private long fileSize;
     private String uploadTime;
     private int downloadTimes;
+    private String isShared;
 
     public FileMsg() {
 
@@ -25,9 +26,10 @@ public class FileMsg {
         this.fileSize = myFile.getFileSize();
         this.uploadTime = myFile.dateToString(myFile.getUploadTime());
         this.downloadTimes = myFile.getDownloadTimes();
+        this.isShared = myFile.getIsShared();
     }
 
-    public FileMsg(String uploaderId, String fileId, String fileName, String fileUrl, String fileFormats, String fileSort, long fileSize, String uploadTime, int downloadTimes) {
+    public FileMsg(String uploaderId, String fileId, String fileName, String fileUrl, String fileFormats, String fileSort, long fileSize, String uploadTime, int downloadTimes, String isShared) {
         this.uploaderId = uploaderId;
         this.fileId = fileId;
         this.fileName = fileName;
@@ -37,6 +39,7 @@ public class FileMsg {
         this.fileSize = fileSize;
         this.uploadTime = uploadTime;
         this.downloadTimes = downloadTimes;
+        this.isShared = isShared;
     }
 
     public String getUploaderId() {
@@ -111,6 +114,14 @@ public class FileMsg {
         this.downloadTimes = downloadTimes;
     }
 
+    public String getIsShared() {
+        return isShared;
+    }
+
+    public void setIsShared(String isShared) {
+        this.isShared = isShared;
+    }
+
     @Override
     public String toString() {
         return "FileMsg{" +
@@ -123,6 +134,7 @@ public class FileMsg {
                 ", fileSize=" + fileSize +
                 ", uploadTime='" + uploadTime + '\'' +
                 ", downloadTimes=" + downloadTimes +
+                ", isShared='" + isShared + '\'' +
                 '}';
     }
 }

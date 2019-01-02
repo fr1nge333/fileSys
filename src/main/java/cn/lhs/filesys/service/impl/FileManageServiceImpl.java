@@ -74,4 +74,13 @@ public class FileManageServiceImpl implements FileManageService {
         return fileManageMapper.addDownloadTimes(map);
     }
 
+    @Override
+    public int shareFile(String uploaderId, String fileUrl, String isShared) {
+        Map<String,String> map = new HashMap<>(  );
+        map.put ( "uploaderId",uploaderId );
+        map.put ( "fileUrl",fileUrl );
+        map.put("isShared",isShared);
+        return fileManageMapper.shareFile(map);
+    }
+
 }

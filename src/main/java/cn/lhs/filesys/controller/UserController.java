@@ -69,4 +69,35 @@ public class UserController {
         return new ResponseMsg(code,"查询成功");
     }
 
+    @RequestMapping(value = "/checkPoint",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseMsg checkPoint(@RequestParam(value = "userId")String userId,
+                                  @RequestParam(value = "uploaderId")String uploaderId,
+                                  @RequestParam(value = "fileSort")String fileSort){
+
+        int usePoint = 0,neededPoint = 0,point = 0;
+        if(fileSort.equals("1")){
+            neededPoint = 1;
+            point = -1;
+        }else {
+            neededPoint = 5;
+            point = -5;
+        }
+        usePoint = userService.getUserPoint(userId);
+        if (usePoint < neededPoint){
+            return new ResponseMsg(0,"积分不足");
+        }else {
+            int flag1 = userService.pointPlusAndMinus(userId,point);
+            int flag2 = userService.pointPlusAndMinus(uploaderId,neededPoint);
+            if(flag1 == 1 && flag2 == 1){
+                return new ResponseMsg(1,"积分扣除成功");
+            }else {
+                return new ResponseMsg(0,"积分扣除失败");
+            }
+
+        }
+    }
+
+
+
 }

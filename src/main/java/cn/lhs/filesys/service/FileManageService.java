@@ -13,4 +13,5 @@ public interface FileManageService {
     int getFileNum();
     int getFileNumByUserId(String uploaderId);
     int addDownloadTimes(String uploaderId,String fileId);
+    int shareFile(String uploaderId,String fileUrl,String isShared);
 }

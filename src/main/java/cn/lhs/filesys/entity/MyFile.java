@@ -9,10 +9,11 @@ public class MyFile {
     private String fileName;
     private String fileUrl;
     private String fileFormats;//文件格式
-    private String fileSort;//文件类别:1-图片，2-视频
+    private String fileSort;//文件类别:1-图片；2-视频
     private long fileSize;
     private Date uploadTime;
     private int downloadTimes;
+    private String isShared;//是否分享：0-私有；1-已分享
 
     public MyFile() {
 
@@ -90,6 +91,14 @@ public class MyFile {
         this.fileUrl = fileUrl;
     }
 
+    public String getIsShared() {
+        return isShared;
+    }
+
+    public void setIsShared(String isShared) {
+        this.isShared = isShared;
+    }
+
     @Override
     public String toString() {
         return "MyFile{" +
@@ -100,8 +109,9 @@ public class MyFile {
                 ", fileFormats='" + fileFormats + '\'' +
                 ", fileSort='" + fileSort + '\'' +
                 ", fileSize=" + fileSize +
-                ", uploadTime=" + dateToString(uploadTime) +
+                ", uploadTime=" + uploadTime +
                 ", downloadTimes=" + downloadTimes +
+                ", isShared='" + isShared + '\'' +
                 '}';
     }
 

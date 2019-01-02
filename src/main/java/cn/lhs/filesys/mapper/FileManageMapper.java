@@ -13,5 +13,6 @@ public interface FileManageMapper {
     List<MyFile> getListMyFileByUserId(Map<String,Object> param);
     int getFileNum();//获取总文件数
     int getFileNumByUserId(String uploaderId);
-    int addDownloadTimes(Map<String,String> param);//递增上传次数
+    int addDownloadTimes(Map<String,String> param);//递增下载次数
+    int shareFile(Map<String,String> param);
 }
