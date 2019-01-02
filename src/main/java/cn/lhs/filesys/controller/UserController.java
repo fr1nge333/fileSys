@@ -43,13 +43,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
-    public String checkUser(HttpServletRequest request,HttpServletResponse response,
+    public String checkUser(HttpServletRequest request,
                              @RequestParam(required = true,value = "userId")String userId,
                              @RequestParam(required = true,value = "password")String password){
         User user = userService.checkUser ( userId,GetMD5.encryptString ( password ) );
         HttpSession session = request.getSession ();
         session.setAttribute ( "user",user );
         return "redirect:/index";
+    }
+
+    @RequestMapping(value = "/userLogout",method = RequestMethod.GET)
+    public String logout(HttpServletRequest request){
+        request.getSession().removeAttribute("user");
+        request.getSession().invalidate();
+        return "redirect:/login";
     }
 
 
