@@ -8,6 +8,7 @@ public class MyFile {
     private String fileId;
     private String fileName;
     private String fileUrl;
+    private String fileOriginName;
     private String fileFormats;//文件格式
     private String fileSort;//文件类别:1-图片；2-视频
     private long fileSize;
@@ -99,6 +100,14 @@ public class MyFile {
         this.isShared = isShared;
     }
 
+    public String getFileOriginName() {
+        return fileOriginName;
+    }
+
+    public void setFileOriginName(String fileOriginName) {
+        this.fileOriginName = fileOriginName;
+    }
+
     @Override
     public String toString() {
         return "MyFile{" +
@@ -106,6 +115,7 @@ public class MyFile {
                 ", fileId='" + fileId + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", fileUrl='" + fileUrl + '\'' +
+                ", fileOriginName='" + fileOriginName + '\'' +
                 ", fileFormats='" + fileFormats + '\'' +
                 ", fileSort='" + fileSort + '\'' +
                 ", fileSize=" + fileSize +

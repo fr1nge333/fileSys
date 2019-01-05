@@ -181,17 +181,18 @@
                     });
                 }else if(data.fileSort == "2"){
                     layer.open({
-                        type: 3
+                        type: 1
                         , title: false //不显示标题栏
                         , offset: 'auto'
                         , area: ['800px', '520px']
                         , shade: 0.5
                         , closeBtn: false
-                        , btn: ['Ok']
+                        , btn: ['关闭']
                         , id: 'imageShow' //设定一个id，防止重复弹出
                         , btnAlign: 'c'
                         , moveType: 0 //拖拽模式，0或者1
-                        , content: '<video style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
+                        , content: '<video autoplay controls loop ' +
+                        'style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
                         , yes: function () {
                             layer.closeAll();
                         }

@@ -79,14 +79,14 @@
             ,auto: false
             ,bindAction: '#testListAction'
             ,before: function(obj){
-                layer.load(); //上传loading
+                layer.load(2); //上传loading
             }
             ,done: function(res){
                 layer.closeAll('loading'); //关闭loading
                 console.log("code="+res.code);
                 //上传成功
                 if(res.code == 1){
-                    return layer.msg(res.msg);
+                    return layer.alert(res.msg, {icon: 1});
                 }
                 //上传失败
                 else {

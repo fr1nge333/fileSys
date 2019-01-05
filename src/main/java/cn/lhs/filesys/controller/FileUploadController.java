@@ -46,17 +46,22 @@ public class FileUploadController {
         }
         for (int i = 0; i < picFiles.size (); i++) {
             if(!picFiles.get(i).isEmpty()) {
-                String[] a = picFiles.get(i).getOriginalFilename().split("\\.");
+                String originalFilename = picFiles.get(i).getOriginalFilename();
+                String[] str = originalFilename.split("\\.");
+                String fileForMats = str[str.length-1];
+                String fileName = originalFilename.substring(0,originalFilename.length()-1-fileForMats.length());
+
                 MyFile myFile = new MyFile();
                 myFile.setUploaderId(uploaderId);
-                myFile.setFileId(System.currentTimeMillis() + "-" + a[0]);
-                myFile.setFileName(a[0]);
-                myFile.setFileFormats(a[1]);
+                myFile.setFileId(System.currentTimeMillis() + "-" + fileName);
+                myFile.setFileName(fileName);
+                myFile.setFileFormats(fileForMats);
                 myFile.setFileSize(picFiles.get(i).getSize());
                 myFile.setFileUrl(imageUrl + picFiles.get(i).getOriginalFilename());
+                myFile.setFileOriginName(originalFilename);
                 myFile.setFileSort(fileSort);
                 myFile.setUploadTime(new Date());
-                myFile.setDownloadTimes(0);
+                myFile.setDownloadTimes(0);//默认下载次数为0
                 myFile.setIsShared("0");//默认不分享
                 logger.info(myFile.toString());
                 try {
@@ -81,14 +86,18 @@ public class FileUploadController {
                                      @RequestParam(required = true,value = "uploaderId")String uploaderId,
                                      @RequestParam(required = true,value = "fileSort")String fileSort) {
 
-        String[] a = videoFile.getOriginalFilename ().split ( "\\." );
+        String originalFilename = videoFile.getOriginalFilename ();
+        String[] str = originalFilename.split("\\.");
+        String fileForMats = str[str.length-1];
+        String fileName = originalFilename.substring(0,originalFilename.length()-1-fileForMats.length());
         MyFile myFile = new MyFile ();
         myFile.setUploaderId ( uploaderId );
-        myFile.setFileId ( System.currentTimeMillis ()+"-"+a[0] );
-        myFile.setFileName ( a[0] );
-        myFile.setFileFormats ( a[1] );
+        myFile.setFileId ( System.currentTimeMillis ()+"-"+ fileName );
+        myFile.setFileName ( fileName );
+        myFile.setFileFormats ( fileForMats );
         myFile.setFileSize ( videoFile.getSize () );
         myFile.setFileUrl ( videoUrl+videoFile.getOriginalFilename () );
+        myFile.setFileOriginName(originalFilename);
         myFile.setFileSort ( fileSort );
         myFile.setUploadTime ( new Date () );
         myFile.setDownloadTimes ( 0 );
@@ -98,14 +107,13 @@ public class FileUploadController {
         try {
             long start = System.currentTimeMillis ();
             videoFile.transferTo ( new File ( myFile.getFileUrl() ) );
-            logger.info ( "用时="+(System.currentTimeMillis ()-start)/1000.0+"秒" );
+            logger.info ( "用时="+(System.currentTimeMillis ()-start)+"ms" );
 
             if (fileManageService.saveMyFile ( myFile )>0){
                 return new ResponseMsg(1,"上传成功");
             }else {
                 return new ResponseMsg(0,"插入数据错误");
             }
-
         } catch (IOException e) {
             e.printStackTrace ();
             return new ResponseMsg(0,"保存文件错误");

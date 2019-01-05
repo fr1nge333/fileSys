@@ -128,11 +128,13 @@ public class FileManageController {
                                  @RequestParam(required = true,value = "isShared")String isShared){
         logger.info("uploaderId="+uploaderId+",fileUrl="+fileUrl+",isShared="+isShared);
         int code = fileManageService.shareFile(uploaderId, fileUrl, isShared);
-        String msg;
+        String msg = "";
         if(code == 0){
-            msg = "修改失败";
-        }else {
-            msg = "修改成功";
+            msg = "操作失败";
+        }else if(code == 1 && isShared.equals("1")){
+            msg = "分享成功";
+        }else if(code == 1 && isShared.equals("0")){
+            msg = "已取消分享";
         }
         return new ResponseMsg(code,msg);
     }

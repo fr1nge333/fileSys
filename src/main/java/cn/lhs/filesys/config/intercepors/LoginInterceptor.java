@@ -45,13 +45,13 @@ public class LoginInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, @Nullable ModelAndView modelAndView) throws Exception {
 
-        logger.info ("==========postHandle===========");
+        //logger.info ("==========postHandle===========");
     }
 
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, @Nullable Exception ex) throws Exception {
 
-        logger.info ("========afterCompletion========");
+        //logger.info ("========afterCompletion========");
     }
 
 }

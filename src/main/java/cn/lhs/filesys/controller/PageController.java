@@ -40,4 +40,9 @@ public class PageController {
         return "showAndDownload";
     }
 
+    @GetMapping("/setting")
+    public String setting(){
+        return "setting";
+    }
+
 }

@@ -18,7 +18,7 @@
     </update>
 
     <update id="modifyPassword" parameterType="java.util.Map">
-        UPDATE user SET password={password} WHERE userId=#{userId};
+        UPDATE user SET password=#{password} WHERE userId=#{userId};
     </update>
 
     <select id="getUserPoint" parameterType="java.lang.String" resultType="java.lang.Integer">

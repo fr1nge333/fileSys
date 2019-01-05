@@ -98,6 +98,59 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/modifyUserName",method = RequestMethod.GET)
+    public String modifyUserName(HttpServletRequest request,
+                                  @RequestParam(value = "userId")String userId,
+                                  @RequestParam(value = "newName")String newName){
+        int code = userService.modifyUserName(userId, newName);
+        if(code == 0){
+            return "redirect:/error";
+        }else {
+            //更新session中user的信息
+            User user = (User) request.getSession().getAttribute("user");
+            user.setUserName(newName);
+            //删除原来session
+            request.getSession().removeAttribute("user");
+            request.getSession().invalidate();
+            //传给前台新的session
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+
+            return "redirect:/setting";
+        }
+    }
+
+    @RequestMapping(value = "/modifyPassword",method = RequestMethod.POST)
+    public String modifyPassword(HttpServletRequest request,
+                             @RequestParam(value = "userId")String userId,
+                             @RequestParam(value = "newPassword")String newPassword){
+        logger.info("userId="+userId+",newPassword="+newPassword);
+
+        int code = userService.modifyPassword(userId,GetMD5.encryptString(newPassword));
+        if(code == 0){
+            return "redirect:/error";
+        }else {
+            //删除原来session
+            request.getSession().removeAttribute("user");
+            request.getSession().invalidate();
+            return "pwdModify";
+        }
+    }
+
+    @RequestMapping(value = "/checkOldPassword",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseMsg checkOldPassword(HttpServletRequest request,
+                                 @RequestParam(value = "userId")String userId,
+                                 @RequestParam(value = "oldPassword")String oldPassword){
+
+        User user = userService.checkUser(userId,GetMD5.encryptString(oldPassword));
+        if (user != null){
+            return new ResponseMsg(1,"验证成功");
+        }else {
+            return new ResponseMsg(0,"验证失败");
+        }
+    }
+
 
 
 }

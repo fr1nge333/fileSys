@@ -5,6 +5,7 @@ public class FileMsg {
     private String fileId;
     private String fileName;
     private String fileUrl;
+    private String fileOriginName;
     private String fileFormats;//文件格式
     private String fileSort;//文件类别
     private long fileSize;
@@ -29,11 +30,12 @@ public class FileMsg {
         this.isShared = myFile.getIsShared();
     }
 
-    public FileMsg(String uploaderId, String fileId, String fileName, String fileUrl, String fileFormats, String fileSort, long fileSize, String uploadTime, int downloadTimes, String isShared) {
+    public FileMsg(String uploaderId, String fileId, String fileName, String fileUrl, String fileOriginName, String fileFormats, String fileSort, long fileSize, String uploadTime, int downloadTimes, String isShared) {
         this.uploaderId = uploaderId;
         this.fileId = fileId;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
+        this.fileOriginName = fileOriginName;
         this.fileFormats = fileFormats;
         this.fileSort = fileSort;
         this.fileSize = fileSize;
@@ -122,6 +124,14 @@ public class FileMsg {
         this.isShared = isShared;
     }
 
+    public String getFileOriginName() {
+        return fileOriginName;
+    }
+
+    public void setFileOriginName(String fileOriginName) {
+        this.fileOriginName = fileOriginName;
+    }
+
     @Override
     public String toString() {
         return "FileMsg{" +
@@ -129,6 +139,7 @@ public class FileMsg {
                 ", fileId='" + fileId + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", fileUrl='" + fileUrl + '\'' +
+                ", fileOriginName='" + fileOriginName + '\'' +
                 ", fileFormats='" + fileFormats + '\'' +
                 ", fileSort='" + fileSort + '\'' +
                 ", fileSize=" + fileSize +

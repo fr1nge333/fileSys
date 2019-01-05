@@ -39,7 +39,7 @@
           <i class="layui-icon layui-icon-username" type="color:#1E9FFF">个人中心</i>
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="/"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+          <dd><a href="/setting"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
           <!--<dd><a href="/"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>-->
           <!--<dd><a href="/"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>-->
           <!--<hr style="margin: 5px 0;">-->
@@ -155,17 +155,18 @@
                   });
               }else if(data.fileSort == "2"){
                   layer.open({
-                      type: 3
+                      type: 1
                       , title: false //不显示标题栏
                       , offset: 'auto'
                       , area: ['800px', '520px']
                       , shade: 0.5
                       , closeBtn: false
-                      , btn: ['Ok']
+                      , btn: ['关闭']
                       , id: 'imageShow' //设定一个id，防止重复弹出
                       , btnAlign: 'c'
                       , moveType: 0 //拖拽模式，0或者1
-                      , content: '<video style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
+                      , content: '<video autoplay controls loop ' +
+                      'style="width: 700px;height: 420px;margin-left: 50px" src="' + src + '"/>'
                       , yes: function () {
                           layer.closeAll();
                       }
@@ -173,28 +174,49 @@
               }
 
           }else if (obj.event === 'delete'){
-              $.ajax({
-                  url:"/manage/delFile",
-                  type: "GET",
-                  data: {uploaderId:data.uploaderId, fileUrl:data.fileUrl},
-                  dataType: "json",
-                  success:function (data) {
-                      console.log(data);
-                      //删除成功后刷新表
-                      table.reload('test',{});
-                      layer.msg(data.msg);
-                  }
+
+
+              layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
+
+                  $.ajax({
+                      url:"/manage/delFile",
+                      type: "GET",
+                      data: {uploaderId:data.uploaderId, fileUrl:data.fileUrl},
+                      dataType: "json",
+                      beforeSend:function () {
+                          layer.load(); //loading画面
+                      },
+                      success:function (data) {
+                          layer.closeAll('loading'); //关闭loading
+                          table.reload('test',{});//删除成功后刷新表
+                          layer.msg(data.msg);//弹出提示信息
+                      },
+                      error:function () {
+                          layer.closeAll('loading'); //关闭loading
+                          layer.msg("删除失败");//弹出提示信息
+                      }
+                  });
+
+                  layer.close(index);
               });
+
           }else if (obj.event === 'share'){
               $.ajax({
                   url: "/manage/shareFile",
                   type: "GET",
                   data: {uploaderId: data.uploaderId, fileUrl:data.fileUrl, isShared: data.isShared === '1'? '0':'1'},
                   dataType: "json",
+                  beforeSend:function () {
+                      layer.load(); //loading画面
+                  },
                   success:function (data) {
-                      //分享成功后刷新表
-                      table.reload('test',{});
-                      layer.msg(data.msg);
+                      layer.closeAll('loading'); //关闭loading
+                      table.reload('test',{});//分享成功后刷新表
+                      layer.msg(data.msg);//弹出提示信息
+                  },
+                  error:function () {
+                      layer.closeAll('loading'); //关闭loading
+                      layer.msg("分享失败");//弹出提示信息
                   }
               });
           }
@@ -221,7 +243,5 @@
       });
 
   });
-
-
 </script>
 </html>
