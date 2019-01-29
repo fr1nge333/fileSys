@@ -17,7 +17,7 @@
       <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
-      <li class="layui-nav-item layui-this">
+      <li class="layui-nav-item layui-this" style="background: #8FCDA0">
         <a href="/index"><i class="layui-icon layui-icon-file"></i>我的文件</a>
       </li>
       <li class="layui-nav-item layui-this">
@@ -27,7 +27,7 @@
         <a href="/uploadImage"><i class="layui-icon layui-icon-upload"></i>上传图片</a>
       </li>
       <li class="layui-nav-item">
-        <a href="/download"><i class="layui-icon layui-icon-download-circle"></i>下载</a>
+        <a href="/download"><i class="layui-icon layui-icon-download-circle"></i>下载文件</a>
       </li>
     </ul>
     
@@ -68,7 +68,7 @@
 
 <!--表格中的switch-->
 <script type="text/html" id="switchTpl">
-  <input type="checkbox" name="share" lay-skin="switch"  lay-text="是|否" lay-filter="isShared"  value="{{d.isShared}}"  {{ d.isShared == 1 ? 'checked' : '' }}>
+  <input type="checkbox" name="share" lay-skin="switch"  lay-text="是|否" lay-filter="isShared"  value="{{d.isShared}}"  {{ d.isShared == 1 ?'checked' : '' }}>
 </script>
 
 <script>
