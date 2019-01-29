@@ -47,6 +47,22 @@
         </div>
     </div>
     <div class="fly-home fly-panel">
+        <div class="layui-form-item">
+
+            <div class="layui-inline">
+                <label class="layui-form-label" for="fileName">文件名称：</label>
+                <input class="layui-input" id="fileName" autocomplete="off">
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" for="fileSort">文件类型：</label>
+                <select id="fileSort">
+                    <option value="1">视频</option>
+                    <option value="2">图片</option>
+                </select>
+            </div>
+
+            <button class="layui-btn" data-type="reload">搜索</button>
+        </div>
         <table class="layui-hide" id="test" lay-filter="test1"></table>
     </div>
 
@@ -203,6 +219,16 @@
         });
 
     });
+    layui.use('form', function(){
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+
+        //……
+
+        //但是，如果你的HTML是动态生成的，自动渲染就会失效
+        //因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+        form.render();
+    });
+
 </script>
 
 </html>

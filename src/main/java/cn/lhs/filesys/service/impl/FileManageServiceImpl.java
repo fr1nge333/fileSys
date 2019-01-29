@@ -57,6 +57,23 @@ public class FileManageServiceImpl implements FileManageService {
     }
 
     @Override
+    public List<MyFile> searchMyFile(String uploaderId, String fileName, String fileSort, int pageIndex, int pageSize) {
+        Map<String,Object> map = new HashMap<>(  );
+        map.put ( "offset",(pageIndex-1)*pageSize );
+        map.put ( "rows",pageSize );
+        if(uploaderId != null){
+            map.put("uploaderId",uploaderId);
+        }
+        if(fileSort != null){
+            map.put("fileSort",fileSort);
+        }
+        if (fileName != null){
+            map.put("fileName",fileName);
+        }
+        return fileManageMapper.searchMyFile(map);
+    }
+
+    @Override
     public int getFileNum() {
         return fileManageMapper.getFileNum();
     }
