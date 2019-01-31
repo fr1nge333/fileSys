@@ -8,11 +8,14 @@ public interface FileManageService {
     int saveMyFile(MyFile file);
     int delMyFile(String uploaderId,String fileUrl);
     int modifyMyFile(String uploaderId,String fileUrl,String fileName);
-    List<MyFile> getListMyFile(int pageIndex,int pageSize);
-    List<MyFile> getListMyFileByUserId(String uploaderId,int pageIndex,int pageSize);
-    List<MyFile> searchMyFile(String uploaderId,String fileName,String fileSort,int pageIndex,int pageSize);
+
+    List<MyFile> getMyOwnFile(String uploaderId,String fileName,String fileSort,String isShared,int pageIndex,int pageSize);
+    int getMyOwnFileNum(String uploaderId,String fileName,String fileSort,String isShared);
+
+    List<MyFile> getSharedFile(String fileName,String fileSort,int pageIndex,int pageSize);
+    int getSharedFileNum(String fileName,String fileSort);
+
     int getFileNum();
-    int getFileNumByUserId(String uploaderId);
     int addDownloadTimes(String uploaderId,String fileId);
     int shareFile(String uploaderId,String fileUrl,String isShared);
 }

@@ -22,6 +22,7 @@ public class FileMsg {
         this.fileId = myFile.getFileId();
         this.fileName = myFile.getFileName();
         this.fileUrl = myFile.getFileUrl();
+        this.fileOriginName = myFile.getFileOriginName();
         this.fileFormats = myFile.getFileFormats();
         this.fileSort = myFile.getFileSort();
         this.fileSize = myFile.getFileSize();

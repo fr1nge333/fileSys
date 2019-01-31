@@ -14,28 +14,43 @@
         UPDATE myfile SET fileName=#{fileName} WHERE uploaderId=#{uploaderId} AND fileUrl=#{fileUrl};
     </update>
 
-    <select id="getListMyFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
-        SELECT * FROM myfile WHERE isShared='1' ORDER BY uploadTime ASC limit #{offset},#{rows};
+    <!--user查询自己上传文件-->
+    <select id="getMyOwnFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
+        SELECT * FROM myfile WHERE uploaderId=#{uploaderId}
+        <if test="fileName != null">AND fileName LIKE concat('%',#{fileName},'%')</if>
+        <if test="fileSort != null">AND fileSort=#{fileSort}</if>
+        <if test="isShared != null">AND isShared=#{isShared}</if>
+        ORDER BY uploadTime ASC limit #{offset},#{rows};
     </select>
 
-    <select id="getListMyFileByUserId" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
-        SELECT * FROM myfile WHERE uploaderId=#{uploaderId} ORDER BY uploadTime ASC limit #{offset},#{rows};
+    <select id="getMyOwnFileNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(fileId) FROM myfile WHERE uploaderId=#{uploaderId}
+        <if test="fileName != null">AND fileName LIKE concat('%',#{fileName},'%')</if>
+        <if test="fileSort != null">AND fileSort=#{fileSort}</if>
+        <if test="isShared != null">AND isShared=#{isShared}</if>;
     </select>
+    <!--******************-->
 
-    <select id="searchMyFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
-        SELECT * FROM myfile WHERE 1=1
-        <if test="uploaderId != null">AND uploaderId=#{uploaderId}</if>
-        <if test="fileName != null">AND fileName LIKE #{fileName}</if>
+
+    <!--下载文件时所用查询-->
+    <select id="getSharedFile" parameterType="java.util.Map" resultType="cn.lhs.filesys.entity.MyFile">
+        SELECT * FROM myfile WHERE isShared='1'
+        <if test="fileName != null">AND fileName LIKE concat('%',#{fileName},'%')</if>
         <if test="fileSort != null">AND fileSort=#{fileSort}</if>
         ORDER BY uploadTime ASC limit #{offset},#{rows};
     </select>
 
-    <select id="getFileNum" resultType="java.lang.Integer">
-        SELECT count(fileId) FROM myfile WHERE isShared='1';
+    <select id="getSharedFileNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT count(fileId) FROM myfile WHERE isShared='1'
+        <if test="fileName != null">AND fileName LIKE concat('%',#{fileName},'%')</if>
+        <if test="fileSort != null">AND fileSort=#{fileSort}</if>;
     </select>
+    <!--*****************-->
 
-    <select id="getFileNumByUserId" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT count(fileId) FROM myfile WHERE uploaderId=#{uploaderId};
+
+
+    <select id="getFileNum"  resultType="java.lang.Integer">
+        SELECT count(fileId) FROM myfile;
     </select>
 
     <update id="addDownloadTimes" parameterType="java.util.Map">

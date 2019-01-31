@@ -29,40 +29,57 @@ public class FileManageController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/listFile")
-    public ResponseMsg listFiles(@RequestParam(required = true,value = "pageIndex")int pageIndex,
-                                  @RequestParam(required = true,value = "pageSize")int pageSize){
+    @GetMapping("/listMyOwnFile")
+    public ResponseMsg listMyOwnFile(@RequestParam(required = true,value = "uploaderId")String uploaderId,
+                                     @RequestParam(required = false,value = "fileName")String fileName,
+                                     @RequestParam(required = false,value = "fileSort")String fileSort,
+                                     @RequestParam(required = false,value = "isShared")String isShared,
+                                     @RequestParam(required = true,value = "pageIndex")int pageIndex,
+                                     @RequestParam(required = true,value = "pageSize")int pageSize){
 
-        logger.info("pageIndex="+pageIndex+",pageSize="+pageSize);
-
-        int count = fileManageService.getFileNum();
-        logger.info("count="+count);
+        logger.info("fileName="+fileName+",fileSort="+fileSort+",isShared="+isShared);
+        if(fileName != null && fileName.trim().length()==0){
+            fileName = null;
+        }
+        if(fileSort != null && fileSort.trim().length()==0){
+            fileSort = null;
+        }
+        if (isShared != null && isShared.trim().length()==0){
+            isShared = null;
+        }
+        int count = fileManageService.getMyOwnFileNum(uploaderId, fileName, fileSort, isShared);
+        logger.info("总条数="+count);
         if(count==0){
             return new ResponseMsg(1,"暂无数据",0,null);
         }
-        List<MyFile> myFileList = fileManageService.getListMyFile(pageIndex,pageSize);
+
+        List<MyFile> myFileList = fileManageService.getMyOwnFile(uploaderId, fileName, fileSort, isShared, pageIndex, pageSize);
         List<FileMsg> fileMsgList = new ArrayList<>();
         for (int i = 0; i < myFileList.size(); i++) {
             fileMsgList.add(new FileMsg(myFileList.get(i)));
         }
-
         return new ResponseMsg(1,"成功",count,fileMsgList);
     }
 
-    @GetMapping("/listFileById")
-    public ResponseMsg listFilesById(@RequestParam(required = true,value = "uploaderId")String uploaderId,
-                                     @RequestParam(required = true,value = "pageIndex")int pageIndex,
-                                     @RequestParam(required = true,value = "pageSize")int pageSize){
+    @GetMapping("/listSharedFile")
+    public ResponseMsg searchFile(@RequestParam(required = false,value = "fileName")String fileName,
+                                  @RequestParam(required = false,value = "fileSort")String fileSort,
+                                  @RequestParam(required = true,value = "pageIndex")int pageIndex,
+                                  @RequestParam(required = true,value = "pageSize")int pageSize){
 
-        logger.info("uploaderId="+uploaderId+",pageIndex="+pageIndex+",pageSize="+pageSize);
-
-        int count = fileManageService.getFileNumByUserId(uploaderId);
-        logger.info("count="+count);
+        logger.info("fileName="+fileName+",fileSort="+fileSort);
+        if(fileName != null && fileName.trim().length()==0){
+            fileName = null;
+        }
+        if(fileSort != null && fileSort.trim().length()==0){
+            fileSort = null;
+        }
+        int count = fileManageService.getSharedFileNum(fileName, fileSort);
+        logger.info("总条数="+count);
         if(count==0){
             return new ResponseMsg(1,"暂无数据",0,null);
         }
-
-        List<MyFile> myFileList = fileManageService.getListMyFileByUserId(uploaderId, pageIndex, pageSize);
+        List<MyFile> myFileList = fileManageService.getSharedFile(fileName, fileSort, pageIndex, pageSize);
         List<FileMsg> fileMsgList = new ArrayList<>();
         for (int i = 0; i < myFileList.size(); i++) {
             fileMsgList.add(new FileMsg(myFileList.get(i)));

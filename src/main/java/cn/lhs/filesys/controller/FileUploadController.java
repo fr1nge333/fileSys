@@ -40,6 +40,7 @@ public class FileUploadController {
     public ResponseMsg uploadImages(HttpServletRequest request,
                                     @RequestParam(required = true,value = "uploaderId")String uploaderId,
                                     @RequestParam(required = true,value = "fileSort")String fileSort) {
+        makeDir(imageUrl);
         List<MultipartFile> picFiles = ((MultipartHttpServletRequest) request).getFiles("file");
         if(picFiles.size() == 0){
             return new ResponseMsg(0,"没有任何文件");
@@ -85,6 +86,7 @@ public class FileUploadController {
     public ResponseMsg uploadVideo(@RequestParam("file")MultipartFile videoFile,
                                      @RequestParam(required = true,value = "uploaderId")String uploaderId,
                                      @RequestParam(required = true,value = "fileSort")String fileSort) {
+        makeDir(videoUrl);
 
         String originalFilename = videoFile.getOriginalFilename ();
         String[] str = originalFilename.split("\\.");
@@ -123,5 +125,12 @@ public class FileUploadController {
 
     }
 
+
+    private void makeDir(String url){
+        File file = new File(url);
+        if(!file.exists()){
+            file.mkdir();
+        }
+    }
 }
 

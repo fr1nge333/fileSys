@@ -50,6 +50,42 @@
   </div>
 </div>
 <div class="fly-home fly-panel">
+  <div class="layui-form">
+    <div class="layui-form-item">
+      <div class="searchTab">
+        <div class="layui-inline">
+          <label class="layui-form-label">文件名称：</label>
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="fileName" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="layui-inline">
+          <label class="layui-form-label">文件类型：</label>
+          <div class="layui-input-inline">
+            <select class="layui-form-select" id="fileSort">
+              <option value=" ">全部</option>
+              <option value="1">图片</option>
+              <option value="2">视频</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">是否分享：</label>
+          <div class="layui-input-inline">
+            <select class="layui-form-select" id="isShared">
+              <option value=" ">全部</option>
+              <option value="0">未分享</option>
+              <option value="1">已分享</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn" data-type="reload">搜索</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <table class="layui-hide" id="test" lay-filter="test1"></table>
 </div>
 
@@ -82,8 +118,9 @@
 
       table.render({
           elem: '#test'
+          ,id:'fileTable'
           ,page:true
-          ,url: '/manage/listFileById'
+          ,url: '/manage/listMyOwnFile'
           ,where: {uploaderId: $('#userId').val()} //如果无需传递额外参数，可不加该参数
           ,method: 'get' //如果无需自定义HTTP类型，可不加该参数
           ,request: {
@@ -240,6 +277,27 @@
                   }
               });
           }
+      });
+
+      //table重载
+      var active = {
+          reload:function () {
+              table.reload('fileTable', {
+                  where: { //设定异步数据接口的额外参数，任意设
+                      fileName: $('#fileName').val()
+                      ,fileSort: $('#fileSort').val()
+                      ,isShared:$('#isShared').val()
+                  }
+                  ,page: {
+                      curr: 1 //重新从第 1 页开始
+                  }
+              });
+          }
+      };
+
+      $('.searchTab .layui-btn').on('click', function(){
+          var type = $(this).data('type');
+          active[type] ? active[type].call(this) : '';
       });
 
   });

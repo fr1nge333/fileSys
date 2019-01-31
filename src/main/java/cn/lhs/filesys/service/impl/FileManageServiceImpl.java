@@ -40,47 +40,68 @@ public class FileManageServiceImpl implements FileManageService {
     }
 
     @Override
-    public List<MyFile> getListMyFile(int pageIndex, int pageSize) {
-        Map<String,Integer> map = new HashMap<>(  );
-        map.put ( "offset",(pageIndex-1)*pageSize );
-        map.put ( "rows",pageSize );
-        return fileManageMapper.getListMyFile(map);
-    }
-
-    @Override
-    public List<MyFile> getListMyFileByUserId(String uploaderId, int pageIndex, int pageSize) {
+    public List<MyFile> getMyOwnFile(String uploaderId,String fileName,String fileSort,String isShared, int pageIndex, int pageSize) {
         Map<String,Object> map = new HashMap<>(  );
         map.put ( "offset",(pageIndex-1)*pageSize );
         map.put ( "rows",pageSize );
         map.put("uploaderId",uploaderId);
-        return fileManageMapper.getListMyFileByUserId(map);
+        if (fileName != null){
+            map.put("fileName",fileName);
+        }
+        if (fileSort != null){
+            map.put("fileSort",fileSort);
+        }
+        if (isShared != null){
+            map.put("isShared",isShared);
+        }
+        return fileManageMapper.getMyOwnFile(map);
     }
 
     @Override
-    public List<MyFile> searchMyFile(String uploaderId, String fileName, String fileSort, int pageIndex, int pageSize) {
+    public int getMyOwnFileNum(String uploaderId,String fileName,String fileSort,String isShared) {
+        Map<String,Object> map = new HashMap<>(  );
+        map.put("uploaderId",uploaderId);
+        if (fileName != null){
+            map.put("fileName",fileName);
+        }
+        if (fileSort != null){
+            map.put("fileSort",fileSort);
+        }
+        if (isShared != null){
+            map.put("isShared",isShared);
+        }
+        return fileManageMapper.getMyOwnFileNum(map);
+    }
+
+    @Override
+    public List<MyFile> getSharedFile(String fileName, String fileSort, int pageIndex, int pageSize) {
         Map<String,Object> map = new HashMap<>(  );
         map.put ( "offset",(pageIndex-1)*pageSize );
         map.put ( "rows",pageSize );
-        if(uploaderId != null){
-            map.put("uploaderId",uploaderId);
-        }
         if(fileSort != null){
             map.put("fileSort",fileSort);
         }
         if (fileName != null){
             map.put("fileName",fileName);
         }
-        return fileManageMapper.searchMyFile(map);
+        return fileManageMapper.getSharedFile(map);
+    }
+
+    @Override
+    public int getSharedFileNum(String fileName,String fileSort) {
+        Map<String,Object> map = new HashMap<>(  );
+        if(fileSort != null){
+            map.put("fileSort",fileSort);
+        }
+        if (fileName != null){
+            map.put("fileName",fileName);
+        }
+        return fileManageMapper.getSharedFileNum(map);
     }
 
     @Override
     public int getFileNum() {
         return fileManageMapper.getFileNum();
-    }
-
-    @Override
-    public int getFileNumByUserId(String uploaderId) {
-        return fileManageMapper.getFileNumByUserId(uploaderId);
     }
 
     @Override

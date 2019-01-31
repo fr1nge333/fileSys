@@ -7,6 +7,7 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.File;
 
 @SpringBootApplication
 @MapperScan("cn.lhs.filesys.mapper")
@@ -20,6 +21,11 @@ public class FilesysApplication {
 	MultipartConfigElement multipartConfigElement() {
 		//String url = "/opt/soft/myFileSystem/temp/";
 		String url = "F:/test/temp/";
+		File file = new File(url);
+		if (!file.exists()){
+			file.mkdir();
+		}
+
 		MultipartConfigFactory factory = new MultipartConfigFactory();
 		factory.setLocation(url);
 		return factory.createMultipartConfig();
