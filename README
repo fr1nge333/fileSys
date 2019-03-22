@@ -1,2 +1,4 @@
+项目所需表的建表语句/mapping/AllTables.sql
+
 项目启动
 nohup java -jar /opt/soft/myFileSystem/filesys.jar > /opt/soft/myFileSystem/filesys.log 2>&1 &
