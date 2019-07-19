@@ -7,9 +7,12 @@ import cn.lhs.filesys.entity.User;
 import cn.lhs.filesys.service.FileManageService;
 import cn.lhs.filesys.service.UserService;
 import cn.lhs.filesys.util.GetMD5;
+import cn.lhs.filesys.util.JwtUtil;
+import io.jsonwebtoken.Jwt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,12 @@ public class UserController {
 
     @Autowired
     public UserService userService;
+
+    @Value("${jwt.token.name}")
+    private String tokenName;
+
+    @Value("${jwt.signing.key}")
+    private String signingKey;
 
     @RequestMapping(value = "/userRegister",method = RequestMethod.POST)
     public String createUser(@RequestParam(required = true,value = "userId")String userId,
@@ -63,10 +72,22 @@ public class UserController {
 
     @RequestMapping(value = "/userTest",method = RequestMethod.GET)
     @ResponseBody
-    public ResponseMsg test(@RequestParam(required = true,value = "userId")String userId){
+    public ResponseMsg test(HttpServletRequest request,@RequestParam(required = true,value = "userId")String userId){
+        String token = JwtUtil.generateToken("fr1ng3",userId);
+        HttpSession session = request.getSession ();
+        session.setAttribute ( tokenName,token );
+        return new ResponseMsg(1,"成功");
+    }
 
-        int code = userService.isUserExist(userId);
-        return new ResponseMsg(code,"查询成功");
+    @RequestMapping(value = "/userTest1",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseMsg test1(HttpServletRequest request,@RequestParam(required = true,value = "userId")String userId){
+        String userFromToken = JwtUtil.getSubject(request,tokenName,signingKey);
+        if(userId.equals(userFromToken)){
+            return new ResponseMsg(1,"成功");
+        }else {
+            return new ResponseMsg(0, "失败");
+        }
     }
 
     @RequestMapping(value = "/checkPoint",method = RequestMethod.GET)
