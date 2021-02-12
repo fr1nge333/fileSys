@@ -13,9 +13,9 @@
 <body>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
-    <a class="fly-logo" href="javascript:void(0)">
-      <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
-    </a>
+    <!--<a class="fly-logo" href="javascript:void(0)">-->
+      <!--<img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">-->
+    <!--</a>-->
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this" style="background: #8FCDA0">
         <a href="/index"><i class="layui-icon layui-icon-file"></i>我的文件</a>
@@ -63,10 +63,8 @@
         <div class="layui-inline">
           <label class="layui-form-label">文件类型：</label>
           <div class="layui-input-inline">
-            <select class="layui-form-select" id="fileSort">
-              <option value=" ">全部</option>
-              <option value="1">图片</option>
-              <option value="2">视频</option>
+            <select class="layui-form-select" id="fileType">
+
             </select>
           </div>
         </div>
@@ -74,9 +72,7 @@
           <label class="layui-form-label">是否分享：</label>
           <div class="layui-input-inline">
             <select class="layui-form-select" id="isShared">
-              <option value=" ">全部</option>
-              <option value="0">未分享</option>
-              <option value="1">已分享</option>
+
             </select>
           </div>
         </div>
@@ -108,6 +104,46 @@
 </script>
 
 <script>
+  $.ajax({
+    url: '/getConstantList',
+    dataType: 'json', //服务器返回json格式数据
+    data:{constantKey:"isShared"},
+    type: 'get', //HTTP请求类型
+    timeout: 10000, //超时时间设置为10秒；
+    success: function(data) {
+      //给一个默认值（‘请选择’）
+      var opt = '<option value=" " selected="selected">全部</option>';
+      //获取返回的数据
+      var value = data.data;
+      //循环遍历
+      for (var i in value) {
+        opt += '<option value = "' + value[i].constantValue + '">' + value[i].constantName + '</option>'
+      }
+      $("#isShared").html(opt);
+      layui.form.render("select");
+    }
+  });
+
+  $.ajax({
+    url: '/getConstantList',
+    dataType: 'json', //服务器返回json格式数据
+    data:{constantKey:"fileType"},
+    type: 'get', //HTTP请求类型
+    timeout: 10000, //超时时间设置为10秒；
+    success: function(data) {
+      //给一个默认值（‘请选择’）
+      var opt = '<option value=" " selected="selected">全部</option>';
+      //获取返回的数据
+      var value = data.data;
+      //循环遍历
+      for (var i in value) {
+        opt += '<option value = "' + value[i].constantValue + '">' + value[i].constantName + '</option>'
+      }
+      $("#fileType").html(opt);
+      layui.form.render("select");
+    }
+  });
+
   layui.use('element', function(){
       var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
   });
@@ -153,9 +189,9 @@
                   ,{field:'fileName',     title: '文件名',  align: 'center',sort: true,edit:'text'}
                   ,{field:'fileUrl',      title: '文件路径',align: 'center',hide:true}
                   ,{field:'fileFormats',  title: '格式',    align: 'center'}
-                  ,{field:'fileSort',     title: '分类',    align: 'center',hide:true}
+                  ,{field:'fileType',     title: '分类',    align: 'center',hide:true}
                   ,{field:'fileSize',     title: '大小(B)', align: 'center',sort: true}
-                  ,{field:'uploadTime',   title: '上传时间',align: 'center',sort: true}
+                  ,{field:'uploadTime',   title: '上传时间',align: 'center',sort: true,templet:function (d) {return layui.util.toDateString(d.uploadTime, 'yyyy-MM-dd HH:mm:ss')}}
                   ,{field:'downloadTimes',title: '下载次数',align: 'center',sort: true}
                   ,{field:'isShared',     title: '是否分享',align: 'center',templet: '#switchTpl',event:'share'}
                   ,{fixed: 'right',       title: '操作',    align: 'center',toolbar: '#barDemo'}
@@ -173,7 +209,7 @@
               window.open(src);
           } else if(obj.event === 'detail'){
               var src = "/download/getFile?fileUrl="+data.fileUrl;
-              if(data.fileSort == "1") {
+              if(data.fileType == "1") {
                   layer.open({
                       type: 3
                       , title: false //不显示标题栏
@@ -190,7 +226,7 @@
                           layer.closeAll();
                       }
                   });
-              }else if(data.fileSort == "2"){
+              }else if(data.fileType == "2"){
                   layer.open({
                       type: 1
                       , title: false //不显示标题栏
@@ -209,16 +245,12 @@
                       }
                   });
               }
-
           }else if (obj.event === 'delete'){
-
-
               layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index){
-
                   $.ajax({
                       url:"/manage/delFile",
-                      type: "GET",
-                      data: {uploaderId:data.uploaderId, fileUrl:data.fileUrl},
+                      type: "POST",
+                      data: {fileId:data.fileId},
                       dataType: "json",
                       beforeSend:function () {
                           layer.load(); //loading画面
@@ -233,15 +265,13 @@
                           layer.msg("删除失败");//弹出提示信息
                       }
                   });
-
                   layer.close(index);
               });
-
           }else if (obj.event === 'share'){
               $.ajax({
                   url: "/manage/shareFile",
-                  type: "GET",
-                  data: {uploaderId: data.uploaderId, fileUrl:data.fileUrl, isShared: data.isShared === '1'? '0':'1'},
+                  type: "POST",
+                  data: {fileId: data.fileId, isShared: data.isShared === '1'? '0':'1'},
                   dataType: "json",
                   beforeSend:function () {
                       layer.load(); //loading画面
@@ -268,8 +298,8 @@
           if(value.length !== 0){
               $.ajax({
                   url:"/manage/modifyFileName",
-                  type: "GET",
-                  data: {uploaderId:data.uploaderId, fileUrl:data.fileUrl,fileName:value},
+                  type: "post",
+                  data: {fileId:data.fileId, newFileName:value},
                   dataType: "json",
                   success:function (data) {
                       console.log(data);
@@ -285,7 +315,7 @@
               table.reload('fileTable', {
                   where: { //设定异步数据接口的额外参数，任意设
                       fileName: $('#fileName').val()
-                      ,fileSort: $('#fileSort').val()
+                      ,fileType: $('#fileType').val()
                       ,isShared:$('#isShared').val()
                   }
                   ,page: {

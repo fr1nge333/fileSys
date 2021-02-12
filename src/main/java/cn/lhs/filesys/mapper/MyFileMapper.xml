@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lhs.filesys.dao.MyFileMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.lhs.filesys.entity.MyFile">
+        <id column="file_id" property="fileId" />
+        <result column="uploader_id" property="uploaderId" />
+        <result column="file_url" property="fileUrl" />
+        <result column="file_origin_name" property="fileOriginName" />
+        <result column="file_name" property="fileName" />
+        <result column="file_formats" property="fileFormats" />
+        <result column="file_type" property="fileType" />
+        <result column="file_size" property="fileSize" />
+        <result column="upload_time" property="uploadTime" />
+        <result column="download_times" property="downloadTimes" />
+        <result column="is_shared" property="isShared" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        file_id, uploader_id, file_url, file_origin_name, file_name, file_formats, file_type, file_size, upload_time, download_times, is_shared, is_del
+    </sql>
+
+</mapper>

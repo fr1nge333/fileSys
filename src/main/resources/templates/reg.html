@@ -14,9 +14,9 @@
 
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
-    <a class="fly-logo" href="javascript:void(0)">
-      <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
-    </a>
+    <!--<a class="fly-logo" href="javascript:void(0)">-->
+      <!--<img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">-->
+    <!--</a>-->
   </div>
 </div>
 
@@ -32,9 +32,9 @@
           <div class="layui-form layui-form-pane">
             <form method="post" action="/userRegister">
               <div class="layui-form-item">
-                <label for="userId" class="layui-form-label">邮箱</label>
+                <label for="mailAddress" class="layui-form-label">邮箱</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="userId" name="userId" required lay-verify="email|userId" onblur="checkUser()" autocomplete="off" class="layui-input">
+                  <input type="text" id="mailAddress" name="mailAddress" required lay-verify="email|mailAddress" onblur="checkUser()" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
               </div>
@@ -75,7 +75,7 @@
         $.ajax({
             type:"GET",
             url:"/userTest",
-            data:{userId:$('#userId').val()},
+            data:{mailAddress:$('#mailAddress').val()},
             dataType:"json",
             success:function(data){
                 console.log(data);
@@ -88,7 +88,7 @@
         var form = layui.form;
 
         form.verify({
-            userId:function () {
+            mailAddress:function () {
                if(count){
                    return "该邮箱已被注册！";
                }

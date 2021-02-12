@@ -1,34 +1,28 @@
 package cn.lhs.filesys.controller;
 
-import cn.lhs.filesys.entity.FileMsg;
-import cn.lhs.filesys.entity.MyFile;
+
 import cn.lhs.filesys.entity.ResponseMsg;
 import cn.lhs.filesys.entity.User;
-import cn.lhs.filesys.service.FileManageService;
+
 import cn.lhs.filesys.service.UserService;
 import cn.lhs.filesys.util.GetMD5;
 import cn.lhs.filesys.util.JwtUtil;
-import io.jsonwebtoken.Jwt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.*;
+import java.util.Date;
 
 @Controller
-public class UserController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
+@Slf4j
+public class UserController extends BaseController{
     @Autowired
-    public UserService userService;
+    private UserService userService;
 
     @Value("${jwt.token.name}")
     private String tokenName;
@@ -36,30 +30,37 @@ public class UserController {
     @Value("${jwt.signing.key}")
     private String signingKey;
 
-    @RequestMapping(value = "/userRegister",method = RequestMethod.POST)
-    public String createUser(@RequestParam(required = true,value = "userId")String userId,
-                             @RequestParam(required = true,value = "userName")String userName,
-                             @RequestParam(required = true,value = "password")String password){
+    @PostMapping(value = "/userRegister")
+    public String createUser(@RequestParam(value = "mailAddress")String mailAddress,
+                             @RequestParam(value = "userName")String userName,
+                             @RequestParam(value = "password")String password){
         User user = new User ();
-        user.setUserId ( userId );
-        user.setUserName ( userName );
-        user.setPassword ( GetMD5.encryptString ( password ) );
-        user.setCreateTime ( new Date () );
-        user.setAuthority ("1");
-        logger.info (user.toString());
-        userService.createUser ( user );
+        user.setMailAddress ( mailAddress )
+                .setUserName ( userName )
+                .setPassword ( GetMD5.encryptString ( password ) )
+                .setCreateTime ( new Date() )
+                .setAuthority ("1");
+        log.info (user.toString());
+        userService.save ( user );
         return "regSucceed";
     }
 
-    @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
+    @PostMapping(value = "/userLogin")
     public String checkUser(HttpServletRequest request,
-                             @RequestParam(required = true,value = "userId")String userId,
-                             @RequestParam(required = true,value = "password")String password){
-        User user = userService.checkUser ( userId,GetMD5.encryptString ( password ) );
+                            @RequestParam(value = "mailAddress")String mailAddress,
+                            @RequestParam(value = "password")String password){
+
+        log.info("mailAddress="+mailAddress+",password="+password);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(User::getMailAddress,mailAddress).eq(User::getPassword,GetMD5.encryptString (password));
+        User user = userService.getOne(wrapper);
+        log.info(user.toString());
         HttpSession session = request.getSession ();
         session.setAttribute ( "user",user );
+        session.setAttribute(tokenName,JwtUtil.generateToken(signingKey,user.getMailAddress()));
         return "redirect:/index";
     }
+
 
     @RequestMapping(value = "/userLogout",method = RequestMethod.GET)
     public String logout(HttpServletRequest request){
@@ -70,18 +71,22 @@ public class UserController {
 
 
 
-    @RequestMapping(value = "/userTest",method = RequestMethod.GET)
+    @GetMapping(value = "/isUserExist")
     @ResponseBody
-    public ResponseMsg test(HttpServletRequest request,@RequestParam(required = true,value = "userId")String userId){
-        String token = JwtUtil.generateToken("fr1ng3",userId);
-        HttpSession session = request.getSession ();
-        session.setAttribute ( tokenName,token );
-        return new ResponseMsg(1,"成功");
+    public ResponseMsg isUserExist(@RequestParam(value = "mailAddress")String mailAddress){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(User::getMailAddress,mailAddress);
+        int count = userService.count(wrapper);
+        if(count == 0){
+            return new ResponseMsg(1,"成功");
+        }else {
+            return new ResponseMsg(0, "失败");
+        }
     }
 
-    @RequestMapping(value = "/userTest1",method = RequestMethod.GET)
+    @GetMapping(value = "/userTest1")
     @ResponseBody
-    public ResponseMsg test1(HttpServletRequest request,@RequestParam(required = true,value = "userId")String userId){
+    public ResponseMsg test1(HttpServletRequest request,@RequestParam(value = "userId")String userId){
         String userFromToken = JwtUtil.getSubject(request,tokenName,signingKey);
         if(userId.equals(userFromToken)){
             return new ResponseMsg(1,"成功");
@@ -90,65 +95,61 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/checkPoint",method = RequestMethod.GET)
+    @GetMapping(value = "/checkPoint")
     @ResponseBody
-    public ResponseMsg checkPoint(@RequestParam(value = "userId")String userId,
-                                  @RequestParam(value = "uploaderId")String uploaderId,
+    public ResponseMsg checkPoint(@RequestParam(value = "userId")Integer userId,
+                                  @RequestParam(value = "uploaderId")Integer uploaderId,
                                   @RequestParam(value = "fileSort")String fileSort){
 
-        int usePoint = 0,neededPoint = 0,point = 0;
-        if(fileSort.equals("1")){
-            neededPoint = 1;
-            point = -1;
-        }else {
-            neededPoint = 5;
-            point = -5;
-        }
-        usePoint = userService.getUserPoint(userId);
-        if (usePoint < neededPoint){
-            return new ResponseMsg(0,"积分不足");
-        }else {
-            int flag1 = userService.pointPlusAndMinus(userId,point);
-            int flag2 = userService.pointPlusAndMinus(uploaderId,neededPoint);
-            if(flag1 == 1 && flag2 == 1){
-                return new ResponseMsg(1,"积分扣除成功");
-            }else {
-                return new ResponseMsg(0,"积分扣除失败");
-            }
-
-        }
+//        User downloadUser = userService.getById(userId);
+//        User uploadUser = userService.getById(uploaderId);
+//        int neededPoint;
+//        if("1".equals(fileSort)){
+//            neededPoint = 1;
+//        }else {
+//            neededPoint = 5;
+//        }
+//        if (downloadUser.getPoint() < neededPoint){
+//            return new ResponseMsg(0,"积分不足");
+//        }else {
+//            uploadUser.setPoint(uploadUser.getPoint()+neededPoint);
+//            downloadUser.setPoint(downloadUser.getPoint()-neededPoint);
+//            boolean plus = userService.updateById(uploadUser);
+//            boolean minus = userService.updateById(downloadUser);
+//            if(plus && minus){
+//                return new ResponseMsg(1,"积分扣除成功");
+//            }else {
+//                return new ResponseMsg(0,"积分扣除失败");
+//            }
+//        }
+        return new ResponseMsg(1,"积分扣除成功");
     }
 
-    @RequestMapping(value = "/modifyUserName",method = RequestMethod.GET)
+    @GetMapping(value = "/modifyUserName")
     public String modifyUserName(HttpServletRequest request,
-                                  @RequestParam(value = "userId")String userId,
-                                  @RequestParam(value = "newName")String newName){
-        int code = userService.modifyUserName(userId, newName);
-        if(code == 0){
+                                 @RequestParam(value = "userId")String userId,
+                                 @RequestParam(value = "newName")String newName){
+        User user = userService.getById(userId);
+        user.setUserName(newName);
+        boolean flag = userService.updateById(user);
+        if(!flag){
             return "redirect:/error";
         }else {
-            //更新session中user的信息
-            User user = (User) request.getSession().getAttribute("user");
-            user.setUserName(newName);
-            //删除原来session
-            request.getSession().removeAttribute("user");
-            request.getSession().invalidate();
-            //传给前台新的session
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-
+            //更新session的信息
+            request.getSession().setAttribute("user", user);
             return "redirect:/setting";
         }
     }
 
-    @RequestMapping(value = "/modifyPassword",method = RequestMethod.POST)
+    @PostMapping(value = "/modifyPassword")
     public String modifyPassword(HttpServletRequest request,
-                             @RequestParam(value = "userId")String userId,
-                             @RequestParam(value = "newPassword")String newPassword){
-        logger.info("userId="+userId+",newPassword="+newPassword);
-
-        int code = userService.modifyPassword(userId,GetMD5.encryptString(newPassword));
-        if(code == 0){
+                                 @RequestParam(value = "userId")String userId,
+                                 @RequestParam(value = "newPassword")String newPassword){
+        log.info("userId="+userId+",newPassword="+newPassword);
+        User user = userService.getById(userId);
+        user.setPassword(GetMD5.encryptString(newPassword));
+        boolean flag = userService.updateById(user);
+        if(!flag){
             return "redirect:/error";
         }else {
             //删除原来session
@@ -158,20 +159,17 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/checkOldPassword",method = RequestMethod.GET)
+    @GetMapping(value = "/checkOldPassword")
     @ResponseBody
-    public ResponseMsg checkOldPassword(HttpServletRequest request,
-                                 @RequestParam(value = "userId")String userId,
-                                 @RequestParam(value = "oldPassword")String oldPassword){
-
-        User user = userService.checkUser(userId,GetMD5.encryptString(oldPassword));
-        if (user != null){
+    public ResponseMsg checkOldPassword(@RequestParam(value = "userId")Integer userId,
+                                        @RequestParam(value = "oldPassword")String oldPassword){
+        User user = new User();
+        user.setPassword(GetMD5.encryptString(oldPassword)).setUserId(userId);
+        int count = user.selectCount(new QueryWrapper<>(user));
+        if (count > 0){
             return new ResponseMsg(1,"验证成功");
         }else {
             return new ResponseMsg(0,"验证失败");
         }
     }
-
-
-
 }

@@ -1,6 +1,6 @@
 package cn.lhs.filesys.service;
 
-import cn.lhs.filesys.entity.User;
+import cn.lhs.filesys.entity.SysConstant;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author author
- * @since 2020-11-18
+ * @since 2021-02-11
  */
-public interface UserService extends IService<User> {
+public interface SysConstantService extends IService<SysConstant> {
 
 }

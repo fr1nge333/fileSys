@@ -1,7 +1,6 @@
 package cn.lhs.filesys.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
@@ -17,44 +16,50 @@ import com.alibaba.fastjson.JSON;
  * </p>
  *
  * @author author
- * @since 2020-11-18
+ * @since 2021-02-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class MyFile extends Model<MyFile> {
+public class SysConstant extends Model<SysConstant> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "file_id", type = IdType.AUTO)
-    private Integer fileId;
+    /**
+     * ID
+     */
+    @TableId(value = "constant_id", type = IdType.AUTO)
+    private Integer constantId;
 
-    private Integer uploaderId;
+    /**
+     * 排序
+     */
+    private Integer constantOrder;
 
-    private String fileUrl;
+    /**
+     * 常量key
+     */
+    private String constantKey;
 
-    private String fileOriginName;
+    /**
+     * 常量名
+     */
+    private String constantName;
 
-    private String fileName;
+    /**
+     * 常量值
+     */
+    private String constantValue;
 
-    private String fileFormats;
-
-    private String fileType;
-
-    private Long fileSize;
-
-    private Date uploadTime;
-
-    private Integer downloadTimes;
-
-    private String isShared;
-
-    private String isDel;
+    /**
+     * 常量说明
+     */
+    private String constantComment;
 
 
     @Override
     protected Serializable pkVal() {
-        return this.fileId;
+        return this.constantId;
     }
 
     @Override

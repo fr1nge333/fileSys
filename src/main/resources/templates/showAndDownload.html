@@ -13,20 +13,20 @@
 <body>
     <div class="fly-header layui-bg-black">
         <div class="layui-container">
-            <a class="fly-logo" href="javascript:void(0)">
-                <img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">
-            </a>
+            <!--<a class="fly-logo" href="javascript:void(0)">-->
+                <!--<img th:src="@{/images/logo1.png}" src="../static/images/logo1.png" alt="layui">-->
+            <!--</a>-->
             <ul class="layui-nav fly-nav layui-hide-xs">
-                <li class="layui-nav-item layui-this">
+                <li class="layui-nav-item">
                     <a href="/index"><i class="layui-icon layui-icon-file"></i>我的文件</a>
                 </li>
-                <li class="layui-nav-item layui-this">
+                <li class="layui-nav-item">
                     <a href="/uploadVideo"><i class="layui-icon layui-icon-upload-drag"></i>上传视频</a>
                 </li>
                 <li class="layui-nav-item">
                     <a href="/uploadImage"><i class="layui-icon layui-icon-upload"></i>上传图片</a>
                 </li>
-                <li class="layui-nav-item" style="background: #8FCDA0">
+                <li class="layui-nav-item layui-this" style="background: #8FCDA0">
                     <a href="/download"><i class="layui-icon layui-icon-download-circle"></i>下载文件</a>
                 </li>
             </ul>
@@ -60,10 +60,10 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">文件类型：</label>
                         <div class="layui-input-inline">
-                            <select class="layui-form-select" id="fileSort">
-                                <option value=" ">全部</option>
-                                <option value="1">图片</option>
-                                <option value="2">视频</option>
+                            <select class="layui-form-select" id="fileType">
+                                <!--<option value=" ">全部</option>-->
+                                <!--<option value="1">图片</option>-->
+                                <!--<option value="2">视频</option>-->
                             </select>
                         </div>
                     </div>
@@ -87,6 +87,26 @@
 </script>
 
 <script>
+    $.ajax({
+        url: '/getConstantList',
+        dataType: 'json', //服务器返回json格式数据
+        data:{constantKey:"fileType"},
+        type: 'get', //HTTP请求类型
+        timeout: 10000, //超时时间设置为10秒；
+        success: function(data) {
+            //给一个默认值（‘请选择’）
+            var opt = '<option value=" " selected="selected">全部</option>';
+            //获取返回的数据
+            var value = data.data;
+            //循环遍历
+            for (var i in value) {
+                opt += '<option value = "' + value[i].constantValue + '">' + value[i].constantName + '</option>'
+            }
+            $("#fileType").html(opt);
+            layui.form.render("select");
+        }
+    });
+
     layui.use('element', function(){
         var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
     });
@@ -138,9 +158,9 @@
                     ,{field:'fileName',     title: '文件名',  align: 'center',sort:true}
                     ,{field:'fileUrl',      title: '文件路径',align: 'center',hide:true}
                     ,{field:'fileFormats',  title: '格式',    align: 'center'}
-                    ,{field:'fileSort',     title: '分类',    align: 'center',hide:true}
+                    ,{field:'fileType',     title: '分类',    align: 'center',hide:true}
                     ,{field:'fileSize',     title: '大小(B)', align: 'center',sort:true}
-                    ,{field:'uploadTime',   title: '上传时间',align: 'center',sort:true}
+                    ,{field:'uploadTime',   title: '上传时间',align: 'center',sort:true,templet: function (d) {return layui.util.toDateString(d.uploadTime, 'yyyy-MM-dd HH:mm:ss')}}
                     ,{field:'downloadTimes',title: '下载次数',align: 'center',sort:true}
                     ,{fixed: 'right',       title:'操作',     align: 'center', toolbar: '#barDemo'}
                 ]
@@ -161,7 +181,7 @@
                     var ajax = $.ajax({
                         url: "/checkPoint",
                         type: "GET",
-                        data: {uploaderId: data.uploaderId, userId: $('#userId').val(), fileSort: data.fileSort},
+                        data: {uploaderId: data.uploaderId, userId: $('#userId').val(), fileType: data.fileType},
                         dataType: "json",
                         success:function (data) {
                             if(data.code === 0){//无法下载，可能是积分不够或者其他原因，给出提示信息
@@ -180,8 +200,8 @@
                             //增加下载次数
                             $.ajax({
                                 url: "/manage/addDownloadTimes",
-                                type: "GET",
-                                data: {uploaderId: data.uploaderId, fileId: data.fileId},
+                                type: "POST",
+                                data: {fileId: data.fileId},
                                 dataType: "json",
                                 success: function (data) {
                                     if (data.code === 0) {
@@ -198,7 +218,7 @@
                 }
             } else if(obj.event === 'detail'){//如果是查看点击事件
                 var src = "/download/getFile?fileUrl="+data.fileUrl;
-                if(data.fileSort == "1") {
+                if(data.fileType == "1") {
                     layer.open({
                         type: 3
                         , title: false //不显示标题栏
@@ -215,7 +235,7 @@
                             layer.closeAll();
                         }
                     });
-                }else if(data.fileSort == "2"){
+                }else if(data.fileType == "2"){
                     layer.open({
                         type: 1
                         , title: false //不显示标题栏
@@ -244,7 +264,7 @@
                 table.reload('fileTable', {
                     where: { //设定异步数据接口的额外参数，任意设
                         fileName: $('#fileName').val()
-                        ,fileSort: $('#fileSort').val()
+                        ,fileType: $('#fileType').val()
                     }
                     ,page: {
                         curr: 1 //重新从第 1 页开始

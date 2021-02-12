@@ -6,14 +6,14 @@ public class ResponseMsg {
     private int code;//0-失败；1-成功
     private String msg;
     private int count;
-    private List<FileMsg> data;
+    private List<?> data;
 
     public ResponseMsg(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public ResponseMsg(int code, String msg, int count, List<FileMsg> data) {
+    public ResponseMsg(int code, String msg, int count, List<?> data) {
         this.code = code;
         this.msg = msg;
         this.count = count;
@@ -36,11 +36,11 @@ public class ResponseMsg {
         this.msg = msg;
     }
 
-    public List<FileMsg> getData() {
+    public List<?> getData() {
         return data;
     }
 
-    public void setData(List<FileMsg> data) {
+    public void setData(List<?> data) {
         this.data = data;
     }
 

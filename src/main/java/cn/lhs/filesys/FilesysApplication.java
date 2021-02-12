@@ -11,7 +11,6 @@ import javax.servlet.MultipartConfigElement;
 import java.io.File;
 
 @SpringBootApplication
-@MapperScan("cn.lhs.filesys.mapper")
 public class FilesysApplication {
 
 	public static void main(String[] args) {
